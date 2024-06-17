@@ -242,14 +242,19 @@
             <div class="row py-3 px-5 contact-row">
                 <div class="col-xl-5 col-lg-6">
                     <div class="contact-form">
-                        <form action="send_email.php" method="post">
-                            <input type="text" placeholder="Name" name="name" required>
-                            <input type="email" placeholder="Email" name="email" required>
-                            <textarea placeholder="Message" class="mb-2" name="message" ></textarea>
-                            <button type="submit" class="mt-3">Submit</button>
+                        <form action="https://api.web3forms.com/submit" method="POST" id="form">
+
+                            <input type="hidden" name="access_key" value="514e5c45-b19c-448a-93e4-6629e2380329">
+
+                            <input type="text" id="name" placeholder="Name" name="name" required>
+                            <input type="email" id="email" placeholder="Email" name="email" required>
+                            <input type="text" id="phone" placeholder="Phone Number" name="phone" required>
+                            <textarea placeholder="Message" id="message" class="mb-2" name="message" required ></textarea>
+                            <button type="submit" class="mt-3" >Submit</button>
                         </form>
                 
                     </div>
+                    <p class="text-base text-center text-gray-400" id="result"></p>
                 </div>
                 <div class="col-xl-7 col-lg-6 contact-text">
                     <div class="contact-text-inner">
@@ -307,7 +312,7 @@
                     <h5 class="mb-4 CotactUs-heading">Contact us</h5>
                     <p>No:53/4, Gandhinagar Extension, Old Perungalathur, Chennai-63</p>
                     <p>8122300402/8072379806</p>
-                    <p>info@canaangroup.com</p>
+                    <p>info@canaangroup.in</p>
                 </div>
                 <div class="col-xl-3 col-lg-3 col-md-4 col-12">
                     <h5 class="mb-4 CotactUs-heading">Quick Links</h5>
@@ -363,6 +368,10 @@
                             target=”_blank” style="color: rgb(255, 255, 255); text-decoration: none;">
                             <li><img src="../Icons//instagram.png" alt="">Instagram</li>
                         </a>
+                        <a href="https://youtube.com/@canaantanddacademy?si=kfew74wI0iV91hHw"
+                        target=”_blank” style="color: rgb(255, 255, 255); text-decoration: none;">
+                        <li><img src="../Icons//youtube.png" alt="">Youtube</li>
+                    </a>
                     </ul>
                 </div>
             </div>
@@ -378,6 +387,56 @@
         const urlParams = new URLSearchParams(window.location.search);
         const vali = urlParams.get('section');
         document.getElementById(vali).scrollIntoView();
+
+
+
+const form = document.getElementById("form");
+const result = document.getElementById("result");
+
+form.addEventListener("submit", function (e) {
+  const formData = new FormData(form);
+  e.preventDefault();
+  var object = {};
+  formData.forEach((value, key) => {
+    object[key] = value;
+  });
+  var json = JSON.stringify(object);
+  result.innerHTML = "Please wait...";
+
+  fetch("https://api.web3forms.com/submit", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Accept: "application/json"
+    },
+    body: json
+  })
+    .then(async (response) => {
+      let json = await response.json();
+      if (response.status == 200) {
+        result.innerHTML = json.message;
+        result.classList.remove("text-gray-500");
+        result.classList.add("text-green-500");
+      } else {
+        console.log(response);
+        result.innerHTML = json.message;
+        result.classList.remove("text-gray-500");
+        result.classList.add("text-red-500");
+      }
+    })
+    .catch((error) => {
+      console.log(error);
+      result.innerHTML = "Something went wrong!";
+    })
+    .then(function () {
+      form.reset();
+      setTimeout(() => {
+        result.style.display = "none";
+      }, 5000);
+    });
+});
+
+
     </script>
 
 </body>
